@@ -3,45 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   parse_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: slyazid <slyazid@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mouyizme <mouyizme@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 00:24:59 by slyazid           #+#    #+#             */
-/*   Updated: 2019/06/27 02:48:02 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/06/28 03:16:15 by mouyizme         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+#include <stdio.h>
 
-//	int		init;
+t_bool	valid_row(char **map_row, t_coord range)
+{
+	int			init;
+	int			c;
+	static int	n_cols;
 
-//			init = 0;
-//			if (ft_isdigit(map_row[init][0]) || (map_row[init][0]) == '-'
-//				&& map_row[init][1] && ft_isidigit(map_row[init][1]))
-//			{
-//			}
+	init = 0;
+	c = 0;
+	if (n_cols == 0)
+		n_cols = range.col;
+	else if (n_cols > 0 && range.col != n_cols)
+		return (false);
+	while (map_row[init])
+	{
+		if (ft_isdigit(**map_row) || ((**map_row == '-'
+		&& *(*map_row + 1) && ft_isdigit(*(*map_row + 1)))))
+			while (ft_isdigit(*(*(map_row + 1)) || !(*(*map_row + 1))))
+			{
+				if (!(*(*map_row + 1)))
+					break ;
+				map_row += 1;
+			}
+		else
+			return (false);
+		init += 1;
+	}
+	return (true);
+}
 
-/*
-** find a way to store		||  create struct for RGB	||	split hexa to 3
-** colours from HEX			||	containing 3 int.		||	2 first		= R
-** to RGB ? passing by		||	same type ?= int[3]		||	2 second	= G
-** int form (or char*)		||	(0 = R, 1 = G, 2 = B)	||	2 last		= B
-
-
-** ********************** BIRI SAID NO **********************
-** int		*hextorgb(int hex)
-** {
-**	int		*rgb;
-**
-**	rgb = (int*)malloc(sizeof(int) * 3);
-**	rgb[0] = 255;
-**	rgb[1] = 255;
-**	rgb[2] = 255;
-**	return (rgb);
-** }
-** ********************** BIRI SAID NO **********************
-*/
-
-int	range_row(char **map_row)
+int		range_row(char **map_row)
 {
 	int	cols;
 
@@ -51,56 +52,58 @@ int	range_row(char **map_row)
 	return (cols);
 }
 
-void	store_map(t_map **map, t_coord range, char **map_row, int n_rows)
+void	store_map(t_map ***map, t_coord range, char **map_row, int n_rows)
 {
-	t_coord	i;
+	int		col;
 	char	*comma;
 
-	i.row = -1;
-	while (++i.row < n_rows)
+	n_rows = 0;
+	col = -1;
+	while (++col < range.col)
 	{
-		i.col = -1;
-		map[range.row] = ft_memalloc(sizeof(t_map) * range.col);
-		while (++i.col < range.col)
-		{
-			(map[range.row][range.col]).height = ft_atoi(map_row[i.row]);
-			if ((comma = ft_strchr(map_row[*************], ',')))
-				(map[range.row][range.col]).colour = ft_atoi_base(comma + 1, 16);
-			else
-				(map[range.row][range.col]).colour = 0Xffffff; 	
-		}
+		((*map)[range.row][col]).height = ft_atoi(*map_row);
+	 	if ((comma = ft_strchr(*map_row, ',')))
+			((*map)[range.row][col]).colour = ft_atoi_base(comma + 3, 16);
+		else
+			((*map)[range.row][col]).colour = 0Xffffff;
+		map_row + 1 ? map_row += 1 : 0;
 	}
 }
 
-int     get_map(char *map_name, t_map **map, int n_rows)
+int		get_map(char *map_name, t_map **map, int n_rows)
 {
 	int		fd;
 	t_coord	range;
 	char	*line;
 	char	**map_row;
 
-	range.row = -1;
+	range.row = 0;
+	range.col = -1;
 	fd = open(map_name, O_RDONLY);
 	if (fd < 0)
 		return (false);
-	while (get_next_line(fd, &line) == 1 && ++range.row)
+	while (get_next_line(fd, &line) == 1)
 	{
+		//printf("line = %s\n", line);
 		map_row = ft_strsplit(line, ' ');
 		if (valid_row(map_row, range) == false)
 		{
-			//ft_memdel((void**)map_row); || /!\ *** BE CAREFUL *** /!\ 
+			/*ft_memdel((void**)map_row); || /!\ *** BE CAREFUL *** /!\ */
 			free(line);
 			map && *map ? ft_memdel((void**)map) : 0;
 			return (false);
 		}
 		else
 		{
-			range.col == -1 ? range.col = range_row(map_row) : 0; //if same cols, 1 time sf
-			store_map(map, range, map_row, n_rows);
-			//ft_memdel((void**)map_row); || /!\ *** BE CAREFUL *** /!\ 
+			range.col == -1 ? range.col = range_row(map_row) : 0;
+			map[range.row] = (t_map*)malloc(sizeof(t_map) * range.col);
+			store_map(&map, range, map_row, n_rows);
+			/* ft_memdel((void**)map_row); || /!\ *** BE CAREFUL *** /!\ */
 			free(line);
 		}
+		range.row += 1;
 	}
 	close(fd);
+	print_map(map, n_rows, range.col);
 	return (true);
 }
