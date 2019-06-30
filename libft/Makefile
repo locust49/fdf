@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: slyazid <marvin@42.fr>                     +#+  +:+       +#+         #
+#    By: slyazid <slyazid@student.1337.ma>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/15 00:41:25 by slyazid           #+#    #+#              #
-#    Updated: 2019/05/24 05:53:00 by slyazid          ###   ########.fr        #
+#    Updated: 2019/06/27 05:42:49 by slyazid          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ CC          = gcc
 FLAGS       = -Wall -Wextra -Werror
 NAME        = libft.a
 
-FILENAMES =  ft_atoi.c  ft_itoa.c  ft_lstmap.c  ft_memcpy.c ft_putendl_fd.c ft_strchr.c ft_striter.c ft_strncat.c ft_strsplit.c ft_trim_delim.c \
+FILENAMES = ft_atoi.c ft_atoi_base.c ft_itoa.c  ft_lstmap.c  ft_memcpy.c ft_putendl_fd.c ft_strchr.c ft_striter.c ft_strncat.c ft_strsplit.c ft_trim_delim.c \
 			ft_bzero.c ft_lstadd.c ft_lstnew.c ft_memdel.c ft_putlst.c ft_strclr.c ft_striteri.c ft_strncmp.c ft_strstr.c ft_wlength.c \
 			ft_isalnum.c ft_lstadd_elt.c ft_lstsize.c ft_memmove.c ft_putnbr.c ft_strcmp.c ft_strjoin.c ft_strncpy.c ft_strsub.c get_next_line.c\
 			ft_isalpha.c ft_lstdel.c ft_memalloc.c ft_memset.c ft_putnbr_fd.c ft_strcpy.c ft_strlcat.c ft_strnequ.c ft_strtrim.c\
