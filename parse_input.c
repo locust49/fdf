@@ -6,7 +6,7 @@
 /*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 00:24:59 by slyazid           #+#    #+#             */
-/*   Updated: 2019/06/30 04:59:04 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/06/30 07:44:44 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,20 +125,21 @@ void	store_map(t_map ***map, t_coord range, char **map_row, int n_rows)
 {
 	int		col;
 	char	*comma;
-
+	int 	i;
+	
+	i = 0;
 	n_rows = 0;
 	col = -1;
 	while (++col < range.col)
 	{
-		((*map)[range.row][col]).height = ft_atoi(*map_row);
-	 	if ((comma = ft_strchr(*map_row, ',')))
+		((*map)[range.row][col]).height = ft_atoi_base(*map_row, 10);
+	 	if ((comma = ft_strstr(*map_row, ",0x")) || (comma = ft_strstr(*map_row, ",0X")))
 			((*map)[range.row][col]).color = ft_atoi_base(comma + 3, 16);
 		else
 			((*map)[range.row][col]).color = 0Xffffff;
 		map_row + 1 ? map_row += 1 : 0;
 	}
 }
-
 
 void    print_map_row(char **map)
 {
@@ -158,6 +159,7 @@ int		get_map(int *get, char *map_name, t_map **map, t_coord *init)
 	t_coord	range;
 	char	*line;
 	char	**map_row;
+	int		index = 0;
 
 	range.row = 0;
 	range.col = -1;
@@ -165,25 +167,29 @@ int		get_map(int *get, char *map_name, t_map **map, t_coord *init)
 	while ((*get = get_next_line(fd, &line)) == 1)
 	{
 		map_row = ft_strsplit(line, ' '); //leaks
-		//print_map_row(map_row);
-		//goto AA;
 		if (valid_row(map_row, range) == false)
 		{
-			// ft_memdel((void**)map_row); || /!\ *** BE CAREFUL *** /!\ */
-			// free_double(map, range, map_row);
 			free(line);
-			//map && *map ? ft_memdel((void**)map) : 0;
 			return (false);
 		}
 		range.col == -1 ? range.col = range_row(map_row) : 0;
 		map[range.row] = (t_map*)malloc(sizeof(t_map) * range.col);
 		init->col = range.col;
 		store_map(&map, range, map_row, init->row);
-		// ft_memdel((void**)map_row); || /!\ *** BE CAREFUL *** /!\ */
+		//print_map_row(map_row);
 		free(line);
 		range.row += 1;
 	}
-	//print_map(map, init->row, init->col);
+	// print_map(map, init->row, init->col);
 	close(fd);
 	return (true);
 }
+
+/*
+** while ((map_row)[index])
+**		{
+**			free((map_row)[index]);
+**			index += 1;
+**		}
+**		free(map_row);
+*/
