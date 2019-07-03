@@ -6,7 +6,7 @@
 /*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/01 15:31:54 by slyazid           #+#    #+#             */
-/*   Updated: 2019/07/03 03:26:16 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/07/03 10:12:32 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,30 +73,21 @@ t_bool	set_height_map(char *map_name, t_map ***map, t_coord size, int *check)
 
 	if ((fd = open(map_name, O_RDONLY)) < 0)
 		return (false);
-	else
+	index.x = -1;
+	index.y = 0;
+	while ((*check = get_next_line(fd, &line)) > 0)
 	{
-		index.x = -1;
-		index.y = 0;
-		while ((*check = get_next_line(fd, &line)) > 0)
-		{
-			if (!(ft_strwcount(line, ' ') == (unsigned int)size.x))
-			{
-				line ? free(line) : 0;
-				return (false);
-			}
-			splitted_row = ft_strsplit(line, ' ');
-			line ? free(line) : 0;
-			if (!write_map(map, size, index, splitted_row))
-			{
-				freedom(splitted_row);
-				return (false);
-			}
-			index.y += 1;
-			freedom(splitted_row);
-		}
+		if (!check_rows(line, size))
+			return (false);
+		splitted_row = ft_strsplit(line, ' ');
 		line ? free(line) : 0;
-		close(fd);
+		if (!check_to_write(map, size, index, splitted_row))
+			return (false);
+		index.y += 1;
+		freedom(splitted_row);
 	}
+	line ? free(line) : 0;
+	close(fd);
 	return (true);
 }
 
@@ -115,7 +106,7 @@ int		parse_input(int argc, char **argv)
 		if (set_height_map(argv[1], &map, size, &check) && check >= 0)
 			return_value = 1;
 		else
-		{	
+		{
 			ft_putendl("byebye");
 			exit(0);
 		}
