@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   clean_parse.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mouyizme <mouyizme@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/01 15:31:54 by slyazid           #+#    #+#             */
-/*   Updated: 2019/07/03 10:12:32 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/07/05 16:58:19 by mouyizme         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	read_file(char *map_name, t_coord *map)
 		{
 			!map->x ? map->x = ft_strwcount(line, ' ') : 0;
 			map->y += 1;
-			// line ? free(line) : 0;
+			line ? free(line) : 0;
 		}
 		line ? free(line) : 0;
 		close(fd);
@@ -51,7 +51,7 @@ t_bool	write_map(t_map ***map, t_coord size, t_coord current, char **row)
 	index.x = -1;
 	while (++index.x < size.x)
 	{
-		if (ft_isdigit(row[index.x][0]) == false
+		if ((ft_isdigit(row[index.x][0]) == false && row[index.x][0] != '-')
 		|| (row[index.x][0] == '-' && !ft_isdigit(row[index.x][1])))
 			break ;
 		(*map)[current.y][index.x].height = ft_atoi(row[index.x]);
@@ -91,26 +91,31 @@ t_bool	set_height_map(char *map_name, t_map ***map, t_coord size, int *check)
 	return (true);
 }
 
-int		parse_input(int argc, char **argv)
+t_input	*parse_input(int argc, char **argv)
 {
-	t_coord	size;
-	t_map	**map;
+	t_input	*input;
 	int		check;
 	int		return_value;
 
+	input = (t_input*)malloc(sizeof(t_input));
+	input->map = NULL;
+	input->size.x = -1;
+	input->size.y = -1;
 	return_value = 0;
 	if (argc == 2)
 	{
-		read_file(argv[1], &size);
-		allocate_map(&map, size);
-		if (set_height_map(argv[1], &map, size, &check) && check >= 0)
-			return_value = 1;
+		read_file(argv[1], &(input->size));
+		allocate_map(&(input->map), input->size);
+		if (set_height_map(argv[1], &(input->map), input->size, &check)
+			&& check >= 0)
+			return (input);
 		else
 		{
-			ft_putendl("byebye");
+			ft_putendl("Invalid map.");
+			input->map ? freedomap(input->map, input->size) : 0;
+			input ? free(input) : 0;
 			exit(0);
 		}
-		freedomap(map, size);
 	}
-	return (return_value);
+	return (NULL);
 }
