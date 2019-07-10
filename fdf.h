@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fdf.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouyizme <mouyizme@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/01 15:32:13 by slyazid           #+#    #+#             */
-/*   Updated: 2019/07/05 16:58:19 by mouyizme         ###   ########.fr       */
+/*   Updated: 2019/07/09 23:56:57 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,12 @@ typedef struct	s_input
 	t_coord	size;
 }				t_input;
 
+typedef struct	s_parameters
+{
+	t_coord	offset;
+	int		gutter;
+}				t_params;
+
 typedef struct	s_image
 {
 	void	*image;
@@ -62,34 +68,54 @@ typedef struct	s_connection
 	void	*connect;
 	void	*window;
 	t_coord	size_win;
-	// t_image	*image;
 }				t_connection;
+
+
+typedef struct	s_settings
+{
+	t_input			*in;
+	t_params		data;
+	t_connection	workspace;
+	int				project;
+}				t_settings;
 
 /*
 **	clean_parse.c:
 */
-t_input		*parse_input(int argc, char **argv);
+t_input			*parse_input(int argc, char **argv);
 
 /*
 ** plot_line.c:
 */
-void	draw_line(t_connection connect, t_coord xy0, t_coord xy1);
-void    draw_map(t_connection wrksp, t_input inp);
+void			draw_line(t_connection connect, t_coord xy0, t_coord xy1);
+
+/*
+** draw.c:
+*/
+void			draw_map(t_connection wrksp, t_input inp, t_params data, int project);
 
 /*
 ** projections.c:
 */
-t_coord	isometric_projection(int x, int y, int z);
-t_coord	oblique_projection(int x, int y, int z);
+t_coord			isometric_projection(int x, int y, int z);
+t_coord			oblique_projection(int x, int y, int z);
+
+/*
+**	Function typedefs
+*/
+
+typedef	t_coord	t_projection(int y, int x, int z);
 
 /*
 **	tools.c:
 */
-t_bool	check_rows(char *line, t_coord size);
-t_bool	write_map(t_map ***map, t_coord size, t_coord current, char **row);
-t_bool	check_to_write(t_map ***map, t_coord size,
-		t_coord index, char **splitted_row);
-void	freedom(char **to_free);
-void	freedomap(t_map **map, t_coord size);
 
-# endif
+t_bool			check_rows(char *line, t_coord size);
+t_bool			write_map(t_map ***map, t_coord size, t_coord current,
+				char **row);
+t_bool			check_to_write(t_map ***map, t_coord size,
+				t_coord index, char **splitted_row);
+void			freedom(char **to_free);
+void			freedomap(t_map **map, t_coord size);
+
+#endif

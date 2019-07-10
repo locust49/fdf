@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouyizme <mouyizme@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/03 03:18:15 by slyazid           #+#    #+#             */
-/*   Updated: 2019/07/05 16:58:19 by mouyizme         ###   ########.fr       */
+/*   Updated: 2019/07/10 00:05:44 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,96 +19,80 @@ void	write_in_window(void *connect, void *window)
 	mlx_pixel_put(connect, window, 130, 0, 0x00009036);
 }
 
-void	print_map(t_map **map, int rows, int cols)
-{
-	int r;
-	int	c;
-
-	r = 0;
-	while (r < rows)
-	{
-		c = 0;
-		while (c < cols)
-		{
-			// printf("%2d ", (map[r][c]).color);
-			printf("%3d ", (map[r][c]).height);
-			c += 1;
-		}
-		printf("\n");
-		r += 1;
-	}
-}
-
-// void	write_image(void *connect, void *window)
-// {
-// 	void			*image;
-// 	int			*img_data;
-// 	int				depth;
-// 	int				szl;
-// 	int				endi;
-// 	int 			pixel;
-// 	unsigned int	rgba;
-
-// 	pixel = -1;
-// 	image = mlx_new_image(connect, 1949, 2000);
-// 	img_data = (int *)mlx_get_data_addr(image, &depth, &szl, &endi);
-// 	mlx_string_put(connect, window, 1001, 250, 0xffffff, "NO HOMO\n");
-// 	while (++pixel < szl * 240)
-// 	{
-// 		if (pixel <= szl * 40)
-// 			img_data[pixel] = 0xE70000;
-// 		else if (pixel <= szl * 80)
-// 			img_data[pixel] = 0xFF8C00;
-// 		else if (pixel <= szl * 120)
-// 			img_data[pixel] = 0xFFEF00;
-// 		else if (pixel <= szl * 160)
-// 			img_data[pixel] = 0x00811F;
-// 		else if (pixel <= szl * 200)
-// 			img_data[pixel] = 0x0044FF;
-// 		else if (pixel <= szl * 240)
-// 			img_data[pixel] = 0x760089;
-// 	}
-// 	printf("bpp = %d, szl = %d, endi = %d\n", depth, szl, endi);
-// 	rgba = mlx_get_color_value(connect, 0x009036);
-// 	// mlx_pixel_put(connect, window, 0, 5, rgba);
-// 	mlx_put_image_to_window(connect, window, image, 0, 500);
-// }
-
-void	prepare_image(void *connect, int width, int height)
+void	prepare_image(void *connect, t_coord size)
 {
 	t_image	*img;
 
 	img = (t_image*)malloc(sizeof(t_image));
-	img->image = mlx_new_image(connect, width, height);
-	img->data = (int *)malloc(sizeof(int) * width);
+	img->image = mlx_new_image(connect, size.x, size.y);
+	img->data = (int *)malloc(sizeof(int) * size.x);
 	img->data = (int *)mlx_get_data_addr(img->image, &(img->depth),
 				&(img->sizeline), &(img->endian));
 }
 
-void	open_window(t_connection *workspace)
+void	open_window(t_connection *workspace, char *name)
 {
 	workspace->connect = mlx_init();
-	workspace->window = mlx_new_window(workspace->connect, 1949, 2003, "Bazaglo");
+	workspace->window = mlx_new_window(workspace->connect,
+						workspace->size_win.x, workspace->size_win.y, name);
+}
+
+int		key_press(int keycode, t_settings *sets)
+{
+	printf("[%d]\n", keycode);
+	if (keycode == 53)
+	{
+		sets->in->map ? freedomap(sets->in->map, sets->in->size) : 0;
+		exit (0);
+	}
+	if (keycode == 35)
+	{
+		if (sets->project == 1)
+			sets->project = 2;
+		else //sets->project == 2 ? 
+			sets->project = 1;
+		mlx_clear_window(sets->workspace.connect, sets->workspace.window);
+		draw_map(sets->workspace, *(sets->in), sets->data, sets->project);
+	}
+	return (1);
 }
 
 int		main(int argc, char **argv)
 {
-	t_connection	workspace;
-	t_input			*in;
-	// t_coord			mapsize;
+	// t_params		data;
+	// t_connection	workspace;
+	// t_input			*in;
+	t_settings		sets;
 
-	// if (parse_input(&map, &mapsize, argc, argv))
-	if ((in = parse_input(argc, argv)))
+	if ((sets.in = parse_input(argc, argv)))
 	{
-		// printf("%p\n", map);
-		open_window(&workspace);
-		workspace.size_win.x = 500;
-		workspace.size_win.y = 500;
-		prepare_image(workspace.connect, workspace.size_win.x, workspace.size_win.y);
-		draw_map(workspace, *in);
-		// print_map(in->map, 8, 9);
-		freedomap(in->map, in->size);
-		mlx_loop(workspace.connect);
+		sets.data.gutter = 50;
+		sets.data.offset.y = 1080 / 2;
+		sets.workspace.size_win.x = 1920;
+		sets.workspace.size_win.y = 1080;
+		sets.project = 2;
+		printf("%d\n", sets.in->size.y);
+		if (sets.in->size.x >= 50)
+		{
+			sets.data.gutter /= (sets.in->size.x/ sets.data.gutter);
+			sets.workspace.size_win.x *= 2;
+			sets.workspace.size_win.y *= 2;
+			sets.data.offset.y *= 2;
+		}
+		// {
+		// 	if (data.gutter / 2 > 1)
+		// 		data.gutter /= 2;
+		// 	// if (data.offset.y / 2 > 0)
+		// 	// 	data.offset.y /= 2;
+		// }
+		printf("win.y = %d * %d = win.x\n", sets.workspace.size_win.y, sets.workspace.size_win.x);
+		printf("off.y = %d * %d = off.x\n", sets.data.offset.y, sets.data.offset.x);
+		sets.data.offset.x = sets.workspace.size_win.x / 3 / sets.in->size.x;
+		open_window(&sets.workspace, argv[1]);
+		mlx_key_hook(sets.workspace.window, &key_press, &sets);
+		draw_map(sets.workspace, *sets.in, sets.data, sets.project);
+		mlx_loop(sets.workspace.connect);
+		freedomap(sets.in->map, sets.in->size);
 	}
-	return (1);
+	return (0);
 }

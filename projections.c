@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   projections.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouyizme <mouyizme@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/05 14:43:43 by slyazid           #+#    #+#             */
-/*   Updated: 2019/07/05 16:58:19 by mouyizme         ###   ########.fr       */
+/*   Updated: 2019/07/10 00:14:42 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_coord	oblique_projection(int x, int y, int z)
 {
 	t_coord points;
 
-	points.x = x + 0.5 * z * cos(45);
-	points.y = y + 0.5 * z * sin(45);
+	points.x = y - 0.5 * z * sin(45);
+	points.y = x - 0.5 * z * cos(45);
 	return (points);
 }
