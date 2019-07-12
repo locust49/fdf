@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: slyazid <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/14 19:31:53 by slyazid           #+#    #+#             */
-/*   Updated: 2019/06/04 08:02:04 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/07/12 17:25:12 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <sys/types.h>
 # include <sys/uio.h>
 # define BUFF_SIZE 1337
+# define FD 1
 
 typedef	struct	s_buff
 {

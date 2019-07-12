@@ -6,12 +6,12 @@
 /*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/04 14:33:44 by mzahir            #+#    #+#             */
-/*   Updated: 2019/07/03 00:24:30 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/07/12 17:25:46 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#define FD 1
+
 static	unsigned int	ft_linelen(char *tab)
 {
 	unsigned int	i;
@@ -22,7 +22,7 @@ static	unsigned int	ft_linelen(char *tab)
 	return (i);
 }
 
-static	char			*ft_line(char *tab)
+static char				*ft_line(char *tab)
 {
 	if (ft_strchr(tab, '\n'))
 	{
@@ -36,7 +36,6 @@ static	char			*ft_line(char *tab)
 	}
 	return (NULL);
 }
-
 
 int						get_next_line(int const fd, char **line)
 {
@@ -58,7 +57,6 @@ int						get_next_line(int const fd, char **line)
 	}
 	*line = ft_strnew(ft_linelen(tab[fd]));
 	*line = ft_strncpy(*line, tab[fd], ft_linelen(tab[fd]));
-	// *line = ft_strsub(tab[fd], 0, ft_linelen(tab[fd]));
 	if (ft_line(tab[fd]) == NULL)
 		return (0);
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 05:39:58 by slyazid           #+#    #+#             */
-/*   Updated: 2019/06/28 02:48:46 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/07/12 17:24:28 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ long		ft_hex_to_dec(int c)
 	return (-1);
 }
 
-long	ft_atoi_base(const char *str, int base)
+long		ft_atoi_base(const char *str, int base)
 {
 	int		i;
 	long	nbr;

@@ -6,87 +6,85 @@
 /*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/05 15:44:02 by slyazid           #+#    #+#             */
-/*   Updated: 2019/07/10 00:06:14 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/07/12 20:23:23 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-t_coord		projected_one(t_params data, t_coord count, t_input inp,
-			t_projection *projection)
+void	make_line(t_connection connect, t_coord xy0, t_coord xy1, long color)
 {
-	t_coord point;
+	t_line d;
+	t_line s;
 
-	point.x = data.offset.x + projection(count.y * data.gutter,
-			count.x * data.gutter, inp.map[count.y][count.x].height * 15).x;
-	point.y = data.offset.y + projection(count.y * data.gutter,
-			count.x * data.gutter, inp.map[count.y][count.x].height * 15).y;
-	return (point);
-}
-
-t_coord		projected_two(t_params data, t_coord count, t_input inp,
-			t_projection *projection)
-{
-	t_coord point;
-
-	point.x = data.offset.x + projection((count.y + 1) * data.gutter,
-		count.x * data.gutter, inp.map[count.y + 1][count.x].height * 15).x;
-	point.y = data.offset.y + projection((count.y + 1) * data.gutter,
-		count.x * data.gutter, inp.map[count.y + 1][count.x].height * 15).y;
-	return (point);
-}
-
-t_coord		projected_th(t_params data, t_coord count, t_input inp,
-			t_projection *projection)
-{
-	t_coord point;
-
-	point.x = data.offset.x + projection(count.y * data.gutter, (count.x + 1) *
-			data.gutter, inp.map[count.y][count.x + 1].height * 15).x;
-	point.y = data.offset.y + projection(count.y * data.gutter, (count.x + 1) *
-			data.gutter, inp.map[count.y][count.x + 1].height * 15).y;
-	return (point);
-}
-
-t_coord		projected_four(t_params data, t_coord count, t_input inp,
-			t_projection *projection)
-{
-	t_coord p;
-
-	p.x = data.offset.x + projection((count.y + 1) * data.gutter, (count.x + 1)
-		* data.gutter, inp.map[count.y + 1][count.x + 1].height * 15).x;
-	p.y = data.offset.y + projection((count.y + 1) * data.gutter, (count.x + 1)
-		* data.gutter, inp.map[count.y + 1][count.x + 1].height * 15).y;
-	return (p);
-}
-
-void		draw_map(t_connection wrksp, t_input inp, t_params data, int project)
-{
-	t_coord			 count;
-	t_coord 		start;
-	t_coord 		end;
-	t_projection	*func;
-
-	func = project == 1 ? isometric_projection : oblique_projection;
-	count.y = -1;
-	while (++count.y < inp.size.y - 1)
+	d.x = abs(xy1.x - xy0.x);
+	s.x = xy0.x < xy1.x ? 1 : -1;
+	d.y = -abs(xy1.y - xy0.y);
+	s.y = xy0.y < xy1.y ? 1 : -1;
+	d.err = d.x + d.y;
+	while (1)
 	{
-		count.x = -1;
-		while (++count.x < inp.size.x - 1)
+		mlx_pixel_put(connect.connect, connect.window, xy0.x, xy0.y, color);
+		if (xy0.x == xy1.x && xy0.y == xy1.y)
+			break ;
+		s.err = 2 * d.err;
+		if (s.err >= d.y)
 		{
-			start = projected_one(data, count, inp, func);
-			end = projected_two(data, count, inp, func);
-			draw_line(wrksp, start, end);
-			end = projected_th(data, count, inp, func);
-			draw_line(wrksp, start, end);
-			if (count.y + 2 == inp.size.y)
-				draw_line(wrksp, projected_two(data, count,
-				inp, func), projected_four(data, count,
-				inp, func));
-			if (count.x + 2 == inp.size.x)
-				draw_line(wrksp, projected_th(data, count,
-				inp, func), projected_four(data, count,
-				inp, func));
+			d.err += d.y;
+			xy0.x += s.x;
+		}
+		if (s.err <= d.x)
+		{
+			d.err += d.x;
+			xy0.y += s.y;
 		}
 	}
+}
+
+void	draw_line(t_connection connect, t_coord xy0, t_coord xy1, long color)
+{
+	if ((xy0.x < 0 && xy1.x < 0) ||
+	(xy0.x > WINDOW_WIDTH && xy1.x > WINDOW_WIDTH) ||
+	(xy0.y < 0 && xy1.y < 0) ||
+	(xy0.y > WINDOW_HEIGHT && xy1.y > WINDOW_HEIGHT))
+		return ;
+	make_line(connect, xy0, xy1, color);
+}
+
+void	draw_map_edges(t_coord i, t_settings *sets,
+		t_projection func, long color)
+{
+	if (i.y + 2 == sets->list->inputs->size.y)
+		draw_line(sets->workspace, project_two(sets, i, func),
+		project_four(sets, i, func), color);
+	if (i.x + 2 == sets->list->inputs->size.x)
+		draw_line(sets->workspace, project_th(sets, i, func),
+		project_four(sets, i, func), color);
+}
+
+void	draw_map(t_settings *sets)
+{
+	t_coord			i;
+	t_coord			start;
+	t_coord			end;
+	t_projection	*func;
+	long			color;
+
+	func = sets->project == 1 ? isometric_projection : oblique_projection;
+	i.y = -1;
+	while (++i.y < sets->list->inputs->size.y - 1)
+	{
+		i.x = -1;
+		while (++i.x < sets->list->inputs->size.x - 1)
+		{
+			color = sets->list->inputs->map[i.y][i.x].color;
+			start = project_one(sets, i, func);
+			end = project_two(sets, i, func);
+			draw_line(sets->workspace, start, end, color);
+			end = project_th(sets, i, func);
+			draw_line(sets->workspace, start, end, color);
+			draw_map_edges(i, sets, func, color);
+		}
+	}
+	write_key_map(sets->workspace.connect, sets->workspace.window);
 }

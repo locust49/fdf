@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strnjoin.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelouarg <anas.elouargui@gmail.com>        +#+  +:+       +#+        */
+/*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 04:39:52 by aelouarg          #+#    #+#             */
-/*   Updated: 2019/06/30 05:24:38 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/07/12 17:24:36 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,3 @@ char		*ft_strnjoin(char *s1, char *s2, size_t len)
 	str[i] = '\0';
 	return (str);
 }
-

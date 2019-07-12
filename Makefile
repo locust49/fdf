@@ -6,7 +6,8 @@ NAME	=	fdf
 LIBR	=	libft
 LBIN	=	libft/libft.a
 
-SRCS	=	 clean_parse.c tools.c draw.c plot_line.c projections.c init.c 
+SRCS	=	draw.c draw_tools.c free_tools.c fdf.c list_maps.c parsing.c \
+			projections.c settings_tools.c initial_tools.c hex_to_decimal.c window_fdf.c
 HDRS	=	-I fdf.h
 
 all: $(NAME)

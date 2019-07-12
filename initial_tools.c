@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tools.c                                            :+:      :+:    :+:   */
+/*   initial_tools.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: slyazid <slyazid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/03 00:05:21 by slyazid           #+#    #+#             */
-/*   Updated: 2019/07/05 14:07:49 by slyazid          ###   ########.fr       */
+/*   Updated: 2019/07/12 17:18:28 by slyazid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,22 +33,30 @@ t_bool	check_to_write(t_map ***map, t_coord size,
 	return (true);
 }
 
-void	freedom(char **to_free)
+void	allocate_simple_input(t_input **input)
 {
-	int	index;
-
-	index = -1;
-	while (to_free[++index])
-		free(to_free[index]);
-	free((void*)to_free);
+	(*input) = (t_input*)malloc(sizeof(t_input));
+	(*input)->map = NULL;
+	(*input)->size.x = -1;
+	(*input)->size.y = -1;
 }
 
-void	freedomap(t_map **map, t_coord size)
+void	allocate_map(t_map ***map, t_coord size)
 {
 	int	index;
 
 	index = -1;
+	(*map) = (t_map**)malloc(sizeof(t_map*) * size.y);
 	while (++index < size.y)
-		free(map[index]);
-	free((void*)map);
+		(*map)[index] = (t_map*)malloc(sizeof(t_map) * size.x);
+}
+
+void	force_quite(int number, char **argv, t_input *input, t_mmap *maps)
+{
+	ft_putstr(argv[number]);
+	ft_putendl(" : Invalid map.");
+	input->map ? freedomap(input->map, input->size) : 0;
+	input ? ft_memdel((void*)&input) : 0;
+	maps ? free_list(maps) : 0;
+	exit(-1);
 }
